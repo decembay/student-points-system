@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <?!= HtmlService.createHtmlOutputFromFile('styles').getContent(); ?>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📊 Admin Dashboard</h2>
+      <table id="students-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h3 id="winner"></h3>
+    </div>
+
+    <script>
+      google.script.run.withSuccessHandler(function(students){
+        let tbody = document.querySelector("#students-table tbody");
+        tbody.innerHTML = "";
+        students.sort((a,b) => b.Points - a.Points);
+        students.forEach(stu => {
+          let row = `<tr>
+            <td>${stu.Name}</td>
+            <td>${stu.Class}</td>
+            <td>${stu.Points}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+        if(students.length > 0){
+          document.getElementById("winner").innerText = 
+            "🏆 Current Top Student: " + students[0].Name + " (" + students[0].Points + " pts)";
+        }
+      }).getAllStudents();
+    </script>
+  </body>
+</html>
