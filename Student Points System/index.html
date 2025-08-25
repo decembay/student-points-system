@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Points System</title>
+    <?!= HtmlService.createHtmlOutputFromFile('styles').getContent(); ?>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📚 Student Points System</h1>
+      <button onclick="window.location.href='?page=qr'">Generate QR Codes</button>
+      <button onclick="window.location.href='?page=scan'">Scan & Update Points</button>
+      <button onclick="window.location.href='?page=admin'">Admin Dashboard</button>
+    </div>
+  </body>
+</html>
