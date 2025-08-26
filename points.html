@@ -11,8 +11,9 @@
       <h2>🎯 Update Student Points</h2>
       <div id="student-info"></div>
       <div class="btn-group">
-        <button onclick="updatePoints(1)">+1 Good</button>
-        <button onclick="updatePoints(-1)">-1 Bad</button>
+        <input type="number" id="points-value" value="1" min="1" style="border-radius:8px; padding:8px; width:80px; font-size:1em;">
+        <button onclick="updatePoints('add')">Add Points</button>
+        <button onclick="updatePoints('subtract')">Subtract Points</button>
       </div>
       <p id="status"></p>
     </div>
@@ -32,7 +33,9 @@
         }).getStudentById(studentId);
       }
 
-      function updatePoints(change){
+      function updatePoints(action){
+        const value = parseInt(document.getElementById('points-value').value, 10) || 0;
+        const change = action === 'add' ? value : -value;
         google.script.run.withSuccessHandler(function(newPoints){
           document.getElementById("status").innerText = "Updated! New Points: " + newPoints;
           loadStudent();
@@ -43,6 +46,3 @@
     </script>
   </body>
 </html>
-
-
-
