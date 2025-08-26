@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Class Management</title>
+		<link rel="stylesheet" href="admin.css">
+		<style>
+			.class-btn {
+				background: linear-gradient(90deg, #a8ff78 0%, #43e97b 100%);
+				color: #fff;
+				border: none;
+				border-radius: 16px;
+				padding: 14px 28px;
+				margin: 10px;
+				font-size: 1.1em;
+				cursor: pointer;
+				transition: transform 0.2s, box-shadow 0.2s;
+			}
+			.class-btn:hover {
+				transform: scale(1.07);
+				box-shadow: 0 0 16px 4px #43e97b;
+				background: linear-gradient(90deg, #43e97b 0%, #a8ff78 100%);
+			}
+			.student-card {
+				display: flex;
+				align-items: center;
+				background: #eafff7;
+				border-radius: 16px;
+				box-shadow: 0 4px 12px rgba(67,233,123,0.10);
+				padding: 16px;
+				margin-bottom: 16px;
+			}
+			.student-img {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				object-fit: cover;
+				margin-right: 18px;
+				background: #fff;
+				border: 2px solid #43e97b;
+			}
+			.student-info {
+				flex: 1;
+			}
+			.upload-label {
+				display: inline-block;
+				background: #43e97b;
+				color: #fff;
+				border-radius: 8px;
+				padding: 4px 10px;
+				cursor: pointer;
+				margin-top: 6px;
+			}
+			.upload-label:hover {
+				background: #22543d;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h2>🎓 Manage Classes</h2>
+			<div id="class-buttons"></div>
+			<div id="class-details"></div>
+		</div>
+		<script>
+			// Demo data
+			let classes = [
+				{ name: "Alpha", students: [
+					{ name: "Aiman", points: 12, img: "" },
+					{ name: "Sara", points: 18, img: "" }
+				] },
+				{ name: "Beta", students: [
+					{ name: "John", points: 20, img: "" },
+					{ name: "Lina", points: 15, img: "" }
+				] }
+			];
+
+			function renderClassButtons() {
+				const btns = document.getElementById('class-buttons');
+				btns.innerHTML = '';
+				classes.forEach((cls, idx) => {
+					const btn = document.createElement('button');
+					btn.className = 'class-btn';
+					btn.textContent = cls.name;
+					btn.onclick = () => showClassDetails(idx);
+					btns.appendChild(btn);
+				});
+			}
+
+			function showClassDetails(classIdx) {
+				const details = document.getElementById('class-details');
+				const cls = classes[classIdx];
+				details.innerHTML = `<h3>🏫 ${cls.name}</h3>`;
+				if(cls.students.length === 0) {
+					details.innerHTML += '<p>No students in this class yet.</p>';
+				}
+				cls.students.forEach((stu, stuIdx) => {
+					details.innerHTML += `
+						<div class="student-card">
+							<img src="${stu.img || 'https://via.placeholder.com/64?text=👤'}" class="student-img" id="img-${classIdx}-${stuIdx}">
+							<div class="student-info">
+								<div><strong>${stu.name}</strong></div>
+								<div>Points: ${stu.points}</div>
+								<label class="upload-label">
+									Upload Photo
+									<input type="file" accept="image/*" style="display:none;" onchange="handleUpload(event, ${classIdx}, ${stuIdx})">
+								</label>
+							</div>
+						</div>
+					`;
+				});
+			}
+
+			// Image upload handler
+			window.handleUpload = function(event, classIdx, stuIdx) {
+				const file = event.target.files[0];
+				if(file) {
+					const reader = new FileReader();
+					reader.onload = function(e) {
+						classes[classIdx].students[stuIdx].img = e.target.result;
+						showClassDetails(classIdx);
+					};
+					reader.readAsDataURL(file);
+				}
+			};
+
+			renderClassButtons();
+		</script>
+	</body>
+</html>
