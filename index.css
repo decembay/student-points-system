@@ -1,30 +1,31 @@
 body {
-    background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+    background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 50%, #43e97b 100%);
     font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', Arial, sans-serif;
-    color: #333;
+    color: #22543d;
     margin: 0;
 }
 
+    
 .container {
     max-width: 500px;
     margin: 40px auto;
-    background: #fffbe7;
+    background: #eafff7;
     border-radius: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 24px rgba(67,233,123,0.15);
     padding: 32px 24px;
     text-align: center;
 }
 
 .main-title {
     font-size: 2.3em;
-    color: #ff4e50;
+    color: #43e97b;
     margin-bottom: 10px;
     letter-spacing: 2px;
 }
 
 .subtitle {
     font-size: 1.1em;
-    color: #f9d423;
+    color: #78ffd6;
     margin-bottom: 28px;
 }
 
@@ -36,14 +37,14 @@ body {
 }
 
 .fun-btn {
-    background: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+    background: linear-gradient(90deg, #a8ff78 0%, #43e97b 100%);
     color: #fff;
     font-size: 1.1em;
     font-family: inherit;
     border: none;
     border-radius: 16px;
     padding: 16px 0;
-    box-shadow: 0 4px 12px rgba(255,78,80,0.15);
+    box-shadow: 0 4px 12px rgba(67,233,123,0.15);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     outline: none;
@@ -51,17 +52,19 @@ body {
 
 .fun-btn:hover {
     transform: scale(1.07);
-    box-shadow: 0 0 24px 8px #f9d423;
-    background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
+    box-shadow: 0 0 24px 8px #43e97b;
+    background: linear-gradient(90deg, #43e97b 0%, #a8ff78 100%);
 }
 
 .smiley-img {
     width: 80px;
     margin-top: 18px;
     animation: bounce 1.2s infinite alternate;
+    filter: hue-rotate(90deg) saturate(1.2);
 }
 
 @keyframes bounce {
-    0%   { transform: translateY(0); }
-    100% { transform: translateY(-18px); }
+    0%   { transform: translateY(0) scale(1); }
+    50%  { transform: translateY(-9px) scale(1.1); }
+    100% { transform: translateY(-18px) scale(1.05); }
 }
