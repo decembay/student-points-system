@@ -4,7 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Class Management</title>
 		<link rel="stylesheet" href="class.css">
-		<script src="script.js"></script>
+        <script src="script.js"></script>
 		<style>
 			.class-btn {
 				background: linear-gradient(90deg, #a8ff78 0%, #43e97b 100%);
@@ -64,17 +64,7 @@
 			<div id="class-details"></div>
 		</div>
 		<script>
-			// Demo data
-			let classes = [
-				{ name: "Alpha", students: [
-					{ name: "Aiman", points: 12, img: "" },
-					{ name: "Sara", points: 18, img: "" }
-				] },
-				{ name: "Beta", students: [
-					{ name: "John", points: 20, img: "" },
-					{ name: "Lina", points: 15, img: "" }
-				] }
-			];
+			let classes = [];
 
 			function renderClassButtons() {
 				const btns = document.getElementById('class-buttons');
@@ -98,34 +88,24 @@
 				cls.students.forEach((stu, stuIdx) => {
 					details.innerHTML += `
 						<div class="student-card">
-							<img src="${stu.img || 'https://via.placeholder.com/64?text=👤'}" class="student-img" id="img-${classIdx}-${stuIdx}">
+							<img src="${stu.pic || 'https://via.placeholder.com/64?text=👤'}" class="student-img" id="img-${classIdx}-${stuIdx}">
 							<div class="student-info">
 								<div><strong>${stu.name}</strong></div>
 								<div>Points: ${stu.points}</div>
-								<label class="upload-label">
-									Upload Photo
-									<input type="file" accept="image/*" style="display:none;" onchange="handleUpload(event, ${classIdx}, ${stuIdx})">
-								</label>
 							</div>
 						</div>
 					`;
 				});
 			}
 
-			// Image upload handler
-			window.handleUpload = function(event, classIdx, stuIdx) {
-				const file = event.target.files[0];
-				if(file) {
-					const reader = new FileReader();
-					reader.onload = function(e) {
-						classes[classIdx].students[stuIdx].img = e.target.result;
-						showClassDetails(classIdx);
-					};
-					reader.readAsDataURL(file);
-				}
-			};
+			function loadData() {
+				google.script.run.withSuccessHandler(function(data) {
+					classes = data;
+					renderClassButtons();
+				}).getAllClassesAndStudents();
+			}
 
-			renderClassButtons();
+			loadData();
 		</script>
 	</body>
 </html>
