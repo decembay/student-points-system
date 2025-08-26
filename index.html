@@ -7,16 +7,51 @@
   </head>
   <body>
     <div class="container">
-      <h1 class="main-title">🌟 Student Points System 🌟</h1>
-      <p class="subtitle">Earn points, unlock rewards, and have fun!</p>
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <select id="lang-switch" style="border-radius: 8px; padding: 6px 12px; font-size: 1em;">
+          <option value="en">English</option>
+          <option value="ms">Bahasa Melayu</option>
+        </select>
+      </div>
+      <h1 class="main-title" id="main-title">🌟 Student Points System 🌟</h1>
+      <p class="subtitle" id="subtitle">Earn points, unlock rewards, and have fun!</p>
       <div class="button-group">
-        <button class="fun-btn" onclick="window.location.href='?page=qr'">🎨 Generate QR Codes</button>
-        <button class="fun-btn" onclick="window.location.href='?page=scan'">🔍 Scan & Update Points</button>
-        <button class="fun-btn" onclick="window.location.href='?page=admin'">🛡️ Admin Dashboard</button>
+        <button class="fun-btn" id="btn-qr" onclick="window.location.href='?page=qr'">🎨 Generate QR Codes</button>
+        <button class="fun-btn" id="btn-scan" onclick="window.location.href='?page=scan'">🔍 Scan & Update Points</button>
+        <button class="fun-btn" id="btn-admin" onclick="window.location.href='?page=admin'">🛡️ Admin Dashboard</button>
       </div>
       <img src="smiley.png" alt="Smiley" class="smiley-img">
     </div>
+    <script>
+      const translations = {
+        en: {
+          mainTitle: '🌟 Student Points System 🌟',
+          subtitle: 'Earn points, unlock rewards, and have fun!',
+          btnQr: '🎨 Generate QR Codes',
+          btnScan: '🔍 Scan & Update Points',
+          btnAdmin: '🛡️ Admin Dashboard'
+        },
+        ms: {
+          mainTitle: '🌟 Sistem Mata Pelajar 🌟',
+          subtitle: 'Kumpul mata, dapatkan ganjaran, dan berseronok!',
+          btnQr: '🎨 Jana Kod QR',
+          btnScan: '🔍 Imbas & Kemaskini Mata',
+          btnAdmin: '🛡️ Papan Pemuka Admin'
+        }
+      };
+      const langSwitch = document.getElementById('lang-switch');
+      function setLanguage(lang) {
+        document.getElementById('main-title').textContent = translations[lang].mainTitle;
+        document.getElementById('subtitle').textContent = translations[lang].subtitle;
+        document.getElementById('btn-qr').textContent = translations[lang].btnQr;
+        document.getElementById('btn-scan').textContent = translations[lang].btnScan;
+        document.getElementById('btn-admin').textContent = translations[lang].btnAdmin;
+      }
+      langSwitch.addEventListener('change', function() {
+        setLanguage(this.value);
+      });
+      // Set default language
+      setLanguage(langSwitch.value);
+    </script>
   </body>
 </html>
-
-
