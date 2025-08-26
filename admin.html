@@ -3,45 +3,88 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
     <script src="script.js"></script>
   </head>
   <body>
     <div class="container">
       <h2>📊 Admin Dashboard</h2>
-      <table id="students-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Class</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <h3 id="winner"></h3>
+      <form id="class-form" style="margin-bottom:20px;">
+        <input type="text" id="class-name" placeholder="Class Name" required style="border-radius:8px; padding:6px;">
+        <button type="submit" style="border-radius:8px; padding:6px 12px;">Add Class</button>
+      </form>
+      <div id="classes-container"></div>
     </div>
 
     <script>
-      google.script.run.withSuccessHandler(function(students){
-        let tbody = document.querySelector("#students-table tbody");
-        tbody.innerHTML = "";
-        students.sort((a,b) => b.Points - a.Points);
-        students.forEach(stu => {
-          let row = `<tr>
-            <td>${stu.Name}</td>
-            <td>${stu.Class}</td>
-            <td>${stu.Points}</td>
-          </tr>`;
-          tbody.innerHTML += row;
+      // Demo data structure for classes and students
+      let classes = [];
+
+      function renderClasses() {
+        const container = document.getElementById('classes-container');
+        container.innerHTML = '';
+        classes.forEach(cls => {
+          let studentsRows = cls.students.map(stu => `
+            <tr>
+              <td>${stu.name}</td>
+              <td>${stu.points}</td>
+            </tr>
+          `).join('');
+          let topStudent = cls.students.length ? cls.students.reduce((a,b) => a.points > b.points ? a : b) : null;
+          container.innerHTML += `
+            <div style="margin-bottom:32px; background:#eafff7; border-radius:16px; box-shadow:0 4px 12px rgba(67,233,123,0.10); padding:20px;">
+              <h3>🏫 ${cls.name}</h3>
+              <form class="student-form" data-class="${cls.name}" style="margin-bottom:12px;">
+                <input type="text" placeholder="Student Name" required style="border-radius:8px; padding:6px;">
+                <input type="number" placeholder="Points" min="0" value="0" required style="border-radius:8px; padding:6px; width:80px;">
+                <button type="submit" style="border-radius:8px; padding:6px 12px;">Add Student</button>
+              </form>
+              <table style="width:100%; margin-bottom:8px;">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${studentsRows}
+                </tbody>
+              </table>
+              <div style="font-weight:bold; color:#43e97b;">
+                ${topStudent ? `🏆 Top Student: ${topStudent.name} (${topStudent.points} pts)` : 'No students yet.'}
+              </div>
+            </div>
+          `;
         });
-        if(students.length > 0){
-          document.getElementById("winner").innerText = 
-            "🏆 Current Top Student: " + students[0].Name + " (" + students[0].Points + " pts)";
+        // Attach event listeners for student forms
+        document.querySelectorAll('.student-form').forEach(form => {
+          form.onsubmit = function(e) {
+            e.preventDefault();
+            const className = this.getAttribute('data-class');
+            const name = this.querySelector('input[type=text]').value.trim();
+            const points = parseInt(this.querySelector('input[type=number]').value, 10);
+            if(name) {
+              const cls = classes.find(c => c.name === className);
+              cls.students.push({name, points});
+              renderClasses();
+            }
+            this.reset();
+          };
+        });
+      }
+
+      document.getElementById('class-form').onsubmit = function(e) {
+        e.preventDefault();
+        const className = document.getElementById('class-name').value.trim();
+        if(className && !classes.some(c => c.name === className)) {
+          classes.push({name: className, students: []});
+          renderClasses();
         }
-      }).getAllStudents();
+        this.reset();
+      };
+
+      // Initial render
+      renderClasses();
     </script>
   </body>
 </html>
-
-
