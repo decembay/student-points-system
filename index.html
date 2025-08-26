@@ -17,7 +17,7 @@
       <p class="subtitle" id="subtitle">Earn points, unlock rewards, and have fun!</p>
       <div class="button-group">
         <button class="fun-btn" id="btn-class" onclick="window.location.href='class.html'">🎨 Class Management</button>
-        <button class="fun-btn" id="btn-scan" onclick="window.location.href='scan.html'">🔍 Scan & Update Points</button>
+        <button class="fun-btn" id="btn-points" onclick="window.location.href='points.html'">🔍 Scan & Update Points</button>
         <button class="fun-btn" id="btn-admin" onclick="window.location.href='admin.html'">🛡️ Admin Dashboard</button>
       </div>
       <img src="smiley.png" alt="Smiley" class="smiley-img">
@@ -28,14 +28,14 @@
           mainTitle: '🌟 Student Points System 🌟',
           subtitle: 'Earn points, unlock rewards, and have fun!',
           btnClass: '🎨 Class Management',
-          btnScan: '🔍 Scan & Update Points',
+          btnPoints: '🔍 Scan & Update Points',
           btnAdmin: '🛡️ Admin Dashboard'
         },
         ms: {
           mainTitle: '🌟 Sistem Mata Pelajar 🌟',
           subtitle: 'Kumpul mata, dapatkan ganjaran, dan berseronok!',
           btnClass: '🎨 Pengurusan Kelas',
-          btnScan: '🔍 Imbas & Kemaskini Mata',
+          btnPoints: '🔍 Imbas & Kemaskini Mata',
           btnAdmin: '🛡️ Papan Pemuka Admin'
         }
       };
@@ -44,7 +44,7 @@
         document.getElementById('main-title').textContent = translations[lang].mainTitle;
         document.getElementById('subtitle').textContent = translations[lang].subtitle;
         document.getElementById('btn-class').textContent = translations[lang].btnClass;
-        document.getElementById('btn-scan').textContent = translations[lang].btnScan;
+        document.getElementById('btn-points').textContent = translations[lang].btnPoints;
         document.getElementById('btn-admin').textContent = translations[lang].btnAdmin;
       }
       langSwitch.addEventListener('change', function() {
