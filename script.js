@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz3WoKmFjphip5EHxvdcJREoUo1mtuOuJF7DxfH23GD2S_LaAeHBYBrvhqDLbpryaDD/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwwnfpheW1uOxsBKUI1yWAH3dcFZZTLr4ZHaMDfH3wHWdWPHwuFGtf8FhOlWUny5dKZ/exec";
 
 // Get all students
 async function loadStudents() {
@@ -15,3 +15,4 @@ async function addPoints(studentId, points) {
   return res.json();
 
 }
+
