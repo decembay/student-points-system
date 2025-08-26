@@ -4,7 +4,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+      @keyframes spin { 0% { transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
+      .student-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border:2px solid #43e97b; background:#fff; }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -13,23 +17,33 @@
         <input type="text" id="class-name" placeholder="Class Name" required style="border-radius:8px; padding:6px;">
         <button type="submit" style="border-radius:8px; padding:6px 12px;">Add Class</button>
       </form>
+      <div id="loading" style="display:none; text-align:center; margin:20px 0;">
+        <span style="display:inline-block; width:40px; height:40px; border:4px solid #43e97b; border-top:4px solid #eafff7; border-radius:50%; animation:spin 1s linear infinite;"></span>
+      </div>
       <div id="classes-container"></div>
     </div>
-
     <script>
-      // Demo data structure for classes and students
       let classes = [];
+
+      function showLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+      }
 
       function renderClasses() {
         const container = document.getElementById('classes-container');
         container.innerHTML = '';
         classes.forEach(cls => {
-          let studentsRows = cls.students.map(stu => `
-            <tr>
-              <td>${stu.name}</td>
-              <td>${stu.points}</td>
-            </tr>
-          `).join('');
+          let studentsRows = cls.students.map((stu, idx) => {
+            let qrDataUrl = stu.qr || '';
+            let imgTag = stu.pic ? `<img src="${stu.pic}" class="student-img"/>` : '<span style="width:48px;height:48px;display:inline-block;background:#eee;border-radius:50%;text-align:center;line-height:48px;">👤</span>';
+            return `
+              <tr>
+                <td>${imgTag}<br>${stu.name}</td>
+                <td>${qrDataUrl ? `<a href='${qrDataUrl}' download='${stu.name}_qr.png'><img src='${qrDataUrl}' alt='QR' style='width:48px;height:48px;'/></a>` : ''}</td>
+                <td>${stu.points}</td>
+              </tr>
+            `;
+          }).join('');
           let topStudent = cls.students.length ? cls.students.reduce((a,b) => a.points > b.points ? a : b) : null;
           container.innerHTML += `
             <div style="margin-bottom:32px; background:#eafff7; border-radius:16px; box-shadow:0 4px 12px rgba(67,233,123,0.10); padding:20px;">
@@ -37,12 +51,14 @@
               <form class="student-form" data-class="${cls.name}" style="margin-bottom:12px;">
                 <input type="text" placeholder="Student Name" required style="border-radius:8px; padding:6px;">
                 <input type="number" placeholder="Points" min="0" value="0" required style="border-radius:8px; padding:6px; width:80px;">
+                <input type="file" accept="image/*" style="border-radius:8px; padding:6px;">
                 <button type="submit" style="border-radius:8px; padding:6px 12px;">Add Student</button>
               </form>
               <table style="width:100%; margin-bottom:8px;">
                 <thead>
                   <tr>
-                    <th>Name</th>
+                    <th>Name & Pic</th>
+                    <th>QR</th>
                     <th>Points</th>
                   </tr>
                 </thead>
@@ -60,31 +76,61 @@
         document.querySelectorAll('.student-form').forEach(form => {
           form.onsubmit = function(e) {
             e.preventDefault();
+            showLoading(true);
             const className = this.getAttribute('data-class');
             const name = this.querySelector('input[type=text]').value.trim();
             const points = parseInt(this.querySelector('input[type=number]').value, 10);
-            if(name) {
-              const cls = classes.find(c => c.name === className);
-              cls.students.push({name, points});
-              renderClasses();
+            const fileInput = this.querySelector('input[type=file]');
+            let pic = '';
+            if(fileInput.files[0]) {
+              const reader = new FileReader();
+              reader.onload = function(ev) {
+                pic = ev.target.result;
+                addStudent(className, name, points, pic);
+              };
+              reader.readAsDataURL(fileInput.files[0]);
+            } else {
+              addStudent(className, name, points, pic);
             }
             this.reset();
           };
         });
       }
 
+      function addStudent(className, name, points, pic) {
+        // Generate QR code
+        let qrContent = `${name}|${className}|${points}`;
+        let qr = new QRious({ value: qrContent, size: 48 });
+        let qrDataUrl = qr.toDataURL();
+        // Save to Google Sheet
+        google.script.run.withSuccessHandler(function() {
+          loadData();
+        }).addStudentToSheet(className, name, pic, points, qrDataUrl);
+      }
+
       document.getElementById('class-form').onsubmit = function(e) {
         e.preventDefault();
+        showLoading(true);
         const className = document.getElementById('class-name').value.trim();
-        if(className && !classes.some(c => c.name === className)) {
-          classes.push({name: className, students: []});
-          renderClasses();
+        if(className) {
+          google.script.run.withSuccessHandler(function() {
+            loadData();
+          }).addClassToSheet(className);
         }
         this.reset();
       };
 
-      // Initial render
-      renderClasses();
+      function loadData() {
+        showLoading(true);
+        google.script.run.withSuccessHandler(function(data) {
+          classes = data;
+          renderClasses();
+          showLoading(false);
+        }).getAllClassesAndStudents();
+      }
+
+      // Initial load
+      loadData();
     </script>
   </body>
 </html>
